@@ -1,0 +1,78 @@
+---
+title: "By the numbers"
+output: html_document
+date: "2024-05-07"
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+#install and run packages
+```{r}
+rm(list=ls())
+
+#install.packages("rvest")
+library(rvest)
+#install.packages("pdftools")
+library(pdftools)
+
+```
+
+#Pulling and downloading the pdf from online for Northern Sierra precpipitation
+```{r}
+
+#URL of pdf file
+
+# ***** need to see if this pdf updates everyday with the same URL *******
+pdf_url <- "https://cdec.water.ca.gov/cgi-progs/products/PLOT_ESI.pdf"
+
+
+#pathway to where you want the pdf to be saved
+#can eventaully make the name of the pdf with the date it is downloaded
+pdf_file <- "data_output/northern_sierra.pdf"
+
+# Download the PDF file
+
+# The "wb" mode is typically used when downloading non-text files, such as images, PDFs, or other binary files. It tells R to open the file in binary mode, which is necessary for correctly handling binary data
+download.file(pdf_url, pdf_file, mode = "wb")
+
+# Extract text from the PDF
+pdf_text <- pdf_text(pdf_file)
+
+# Print the extracted text
+print(pdf_text)
+
+```
+
+#Pulling the 'current' precipitation for Northern Sierra
+```{r}
+
+# Assuming pdf_file contains the path to the PDF file you downloaded earlier
+pdf_file <- "data_output/northern_sierra.pdf"
+
+# Extract text from the PDF
+pdf_text <- pdf_text(pdf_file)
+
+# Print the next four characters following "Current:" in each sentence
+if (length(pdf_text) > 0) {
+  for (sentence in pdf_text) {
+    pattern <- "(?i)Current:\\s?(.{4})"
+    next_four <- regmatches(sentence, regexpr(pattern, sentence, perl = TRUE))
+    if (length(next_four) > 0) {
+      print(paste("Current:", next_four))
+    } else {
+      print("Next four characters after 'Current:' not found.")
+    }
+  }
+} else {
+  print("No text extracted from the PDF.")
+}
+```
+#need to do this for the other regions
+```{r}
+
+
+
+```
