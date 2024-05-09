@@ -17,6 +17,8 @@ rm(list=ls())
 library(rvest)
 #install.packages("pdftools")
 library(pdftools)
+library(tidyverse)
+
 
 ```
 
@@ -26,32 +28,33 @@ library(pdftools)
 #URL of pdf file
 
 # ***** need to see if this pdf updates everyday with the same URL *******
-pdf_url <- "https://cdec.water.ca.gov/cgi-progs/products/PLOT_ESI.pdf"
+northern_pdf_url <- "https://cdec.water.ca.gov/cgi-progs/products/PLOT_ESI.pdf"
 
 
 #pathway to where you want the pdf to be saved
 #can eventaully make the name of the pdf with the date it is downloaded
-pdf_file <- "data_output/northern_sierra.pdf"
+
+northern_pdf_file<-"C:/Users/jweidenfeld/Desktop/Rprojects/By_The_Numbers/data_output/northern_sierra.pdf"
+
+
 
 # Download the PDF file
 
 # The "wb" mode is typically used when downloading non-text files, such as images, PDFs, or other binary files. It tells R to open the file in binary mode, which is necessary for correctly handling binary data
-download.file(pdf_url, pdf_file, mode = "wb")
+download.file(northern_pdf_url, northern_pdf_file, mode = "wb")
 
 # Extract text from the PDF
-pdf_text <- pdf_text(pdf_file)
+northern_pdf_text <- pdf_text(northern_pdf_file)
 
 # Print the extracted text
-print(pdf_text)
+print(northern_pdf_text)
 
 ```
 
-#Pulling the 'current' precipitation for Northern Sierra
+#Pulling the 'current' precipitation for Northern Sierra (using that starts on line 79)
 ```{r}
 
 # Assuming pdf_file contains the path to the PDF file you downloaded earlier
-pdf_file <- "data_output/northern_sierra.pdf"
-
 # Extract text from the PDF
 pdf_text <- pdf_text(pdf_file)
 
@@ -69,10 +72,344 @@ if (length(pdf_text) > 0) {
 } else {
   print("No text extracted from the PDF.")
 }
+
+
 ```
-#need to do this for the other regions
+
+#Pulling the 'current' precipitation inches for Northern Sierra
+```{r}
+northern_next_four_values <- c()
+
+# Extract text from the PDF file
+northern_pdf_text <- pdf_text(northern_pdf_file)
+
+# Print the next four characters following "Current:" in each sentence
+if (length(northern_pdf_text) > 0) {
+  for (sentence in northern_pdf_text) {
+    pattern <- "(?i)Current:\\s?(.{4})"
+    northern_next_four <- regmatches(sentence, regexpr(pattern, sentence, perl = TRUE))
+    if (length(northern_next_four) > 0) {
+      # Append the value of next_four to the vector
+      northern_next_four_values <- c(northern_next_four_values, northern_next_four)
+      print(paste("Current:", northern_next_four))
+    } else {
+      print("Next four characters after 'Current:' not found.")
+    }
+  }
+} else {
+  print("No text extracted from the PDF.")
+}
+
+# Print the values of next_four_values
+print(northern_next_four_values)
+
+
+```
+#Northern Sierra
+# Pulling out percent average for this date
+```{r}
+#create an empty vector
+northern_next_four_values_average <- c()
+
+# Extract text from the PDF file
+northern_pdf_text <- pdf_text(northern_pdf_file)
+
+# Print the next four characters following "Current:" in each sentence
+if (length(northern_pdf_text) > 0) {
+  for (sentence in northern_pdf_text) {
+    pattern <- "(?i)Percent of Average for this Date:\\s?(.{4})"
+    northern_next_four <- regmatches(sentence, regexpr(pattern, sentence, perl = TRUE))
+    if (length(next_four) > 0) {
+      # Append the value of next_four to the vector
+      northern_next_four_values_average <- c(northern_next_four_values_average, northern_next_four)
+      print(paste("Percent of Average for this Date:", northern_next_four_values_average))
+    } else {
+      print("Next four characters after 'Percent of Average for this Date:' not found.")
+    }
+  }
+} else {
+  print("No text extracted from the PDF.")
+}
+
+# Print the values of next_four_values
+print(northern_next_four_values_average)
+
+
+```
+
+#Central Sierra precipitation
+#Pulling and downloading the pdf from online 
 ```{r}
 
+#URL of pdf file
+
+# ***** need to see if this pdf updates everyday with the same URL *******
+central_ppt_pdf_url <- "https://cdec.water.ca.gov/cgi-progs/products/PLOT_FSI.pdf"
+
+
+#pathway to where you want the pdf to be saved
+#can eventaully make the name of the pdf with the date it is downloaded
+central_ppt_pdf_file2<-"C:/Users/jweidenfeld/Desktop/Rprojects/By_The_Numbers/data_output/central_sierra2.pdf"
+
+# Download the PDF file
+
+# The "wb" mode is typically used when downloading non-text files, such as images, PDFs, or other binary files. It tells R to open the file in binary mode, which is necessary for correctly handling binary data
+download.file(central_ppt_pdf_url, central_ppt_pdf_file2, mode = "wb")
+
+# Extract text from the PDF
+central_pdf_text <- pdf_text(central_ppt_pdf_file2)
+
+# Print the extracted text
+print(central_pdf_text)
+
+```
+#Central Sierra
+#PUlling out Percent average
+```{r}
+#create an empty vector
+central_next_four_values <- c()
+
+# Extract text from the PDF file
+central_pdf_text <- pdf_text(central_ppt_pdf_file)
+
+# Print the next four characters following "Current:" in each sentence
+if (length(central_pdf_text) > 0) {
+  for (sentence in central_pdf_text) {
+    pattern <- "(?i)Percent of Average for this Date:\\s?(.{4})"
+    next_four <- regmatches(sentence, regexpr(pattern, sentence, perl = TRUE))
+    if (length(next_four) > 0) {
+      # Append the value of next_four to the vector
+      central_next_four_values <- c(central_next_four_values, next_four)
+      print(paste("Percent of Average for this Date:", next_four))
+    } else {
+      print("Next four characters after 'Current:' not found.")
+    }
+  }
+} else {
+  print("No text extracted from the PDF.")
+}
+
+# Print the values of next_four_values
+print(central_next_four_values)
+
+```
+
+# Central Sierra
+# #Pulling the 'current' precipitation inches for Central Sierra
+```{r}
+#create and empty vector 
+central_current_ppt <- c()
+# Extract text from the PDF file
+central_pdf_text <- pdf_text(central_ppt_pdf_file)
+
+# Print the next four characters following "Current:" in each sentence
+if (length(central_pdf_text) > 0) {
+  for (sentence in central_pdf_text) {
+    pattern <- "(?i)Current:\\s?(.{4})"
+    next_four <- regmatches(sentence, regexpr(pattern, sentence, perl = TRUE))
+    if (length(next_four) > 0) {
+      # Append the value of next_four to the vector
+      central_current_ppt <- c(central_current_ppt, next_four)
+      print(paste("Current:", next_four))
+    } else {
+      print("Next four characters after 'Current:' not found.")
+    }
+  }
+} else {
+  print("No text extracted from the PDF.")
+}
+
+# Print the values of next_four_values
+print(central_current_ppt)
+
+```
+
+##########################################################
+                      # SNOW PACK #
+
+```{r}
+#URL of pdf file
+
+# ***** need to see if this pdf updates everyday with the same URL *******
+snow_pack_pdf_url <- "https://cdec.water.ca.gov/cgi-progs/products/swccond.pdf"
+
+
+#pathway to where you want the pdf to be saved
+#can eventaully make the name of the pdf with the date it is downloaded
+snow_pack_pdf_file<-"C:/Users/jweidenfeld/Desktop/Rprojects/By_The_Numbers/data_output/snow_pack.pdf"
+
+# Download the PDF file
+
+# The "wb" mode is typically used when downloading non-text files, such as images, PDFs, or other binary files. It tells R to open the file in binary mode, which is necessary for correctly handling binary data
+download.file(snow_pack_pdf_url, snow_pack_pdf_file, mode = "wb")
+
+# Extract text from the PDF
+snow_pack_pdf_text <- pdf_text(snow_pack_pdf_file)
+
+# Print the extracted text
+print(snow_pack_pdf_text)
 
 
 ```
+
+
+
+#North Snow average snow pack
+```{r}
+# Define the pattern to match the line containing "NORTH" and the associated percentages
+pattern <- "(?i)NORTH\\s{2,}(\\d+%).*?(\\d+%)"
+
+# Extract the "NORTH" section
+north_match <- regmatches(snow_pack_pdf_text, regexec(pattern, snow_pack_pdf_text, perl = TRUE))
+
+# Check if the "NORTH" section is found
+if (length(north_match) > 0) {
+  # Extract both percentages from the matched text
+  north_percentages <- regmatches(north_match[[1]], gregexpr("\\d+%", north_match[[1]]))[[1]]
+  
+  # Print the extracted percentage
+  if (length(north_percentages) >= 2) {
+    print(paste("NORTH", north_percentages[2], "of percent avg. to date snow pack"))
+  } else {
+    print("Second percentage in the 'NORTH' section not found.")
+  }
+} else {
+  print("NORTH section not found.")
+}
+
+```
+#north snow water equivalent
+```{r}
+
+# Define the pattern to match the line containing the snow water equivalent information
+pattern <- "(?i)Average snow water equivalent \\(Inches\\)\\s+\\d+\\.\\d+"
+
+# Extract the line containing snow water equivalent information
+snow_water_line <- regmatches(snow_pack_pdf_text, regexpr(pattern, snow_pack_pdf_text, perl = TRUE))
+
+# Check if the line is found
+if (length(snow_water_line) > 0) {
+  print(snow_water_line)
+} else {
+  print("Snow water equivalent information not found.")
+}
+
+
+```
+#Central % Snow average snow pack
+```{r}
+# Define the pattern to match the line containing "NORTH" and the associated percentages
+pattern <- "(?i)CENTRAL SIERRA\\s{2,}(\\d+%).*?(\\d+%)"
+
+# Extract the "CENTRAL SIERRA" section
+central_match <- regmatches(snow_pack_pdf_text, regexec(pattern, snow_pack_pdf_text, perl = TRUE))
+
+# Check if the "CENTRAL SIERRA" section is found
+if (length(central_match) > 0) {
+  # Extract both percentages from the matched text
+  central_percentages <- regmatches(central_match[[1]], gregexpr("\\d+%", central_match[[1]]))[[1]]
+  
+  # Print the extracted percentage
+  if (length(central_percentages) >= 2) {
+    print(paste("CENTRAL SIERRA", central_percentages[2], "of percent avg. to date snow pack"))
+  } else {
+    print("Second percentage in the 'CENTRAL SIERRA' section not found.")
+  }
+} else {
+  print("CENTRAL SIERRA section not found.")
+}
+
+
+```
+#Central snow water equivalent
+```{r}
+# Find the position of "Central Sierra" in the text
+central_sierra_position <- regexpr("(?i)Central Sierra", snow_pack_pdf_text)
+
+# If "Central Sierra" is found, find the position of "Average snow water equivalent (Inches)" after it
+if (central_sierra_position > 0) {
+  # Get the substring starting from the position of "Central Sierra"
+  substring_after_central <- substring(snow_pack_pdf_text, central_sierra_position)
+  
+  # Find the position of "Average snow water equivalent (Inches)" within the substring
+  snow_water_position <- regexpr("(?i)Average snow water equivalent \\(Inches\\)", substring_after_central)
+  
+  # If "Average snow water equivalent (Inches)" is found, extract the numeric value following it
+  if (snow_water_position > 0) {
+    # Get the substring starting from the position of "Average snow water equivalent (Inches)"
+    snow_water_substring <- substring(substring_after_central, snow_water_position)
+    
+    # Extract the numeric value following "Average snow water equivalent (Inches)"
+    snow_water_value <- regmatches(snow_water_substring, regexpr("\\d+\\.\\d+", snow_water_substring))
+    
+    # If a numeric value is found, print it
+    if (length(snow_water_value) > 0) {
+      print(snow_water_value)
+    } else {
+      print("Snow water equivalent value not found.")
+    }
+  } else {
+    print("Average snow water equivalent information not found for Central Sierra.")
+  }
+} else {
+  print("Central Sierra information not found.")
+}
+
+
+```
+# State average snow pack: water year
+```{r}
+
+# Find the position of "State" in the text
+state_position <- regexpr("(?i)State", snow_pack_pdf_text)
+
+# If "State" is found, find the position of the numeric value after it
+if (state_position > 0) {
+  # Get the substring starting from the position of "State"
+  substring_after_state <- substring(snow_pack_pdf_text, state_position)
+  
+  # Extract the numeric value following "State"
+  snow_water_value <- regmatches(substring_after_state, regexpr("\\d+\\.\\d+", substring_after_state))
+  
+  # If a numeric value is found, print it
+  if (length(snow_water_value) > 0) {
+    print(snow_water_value)
+  } else {
+    print("Snow water equivalent value not found.")
+  }
+} else {
+  print("State information not found.")
+}
+
+```
+#Percent of normal for this date (%)
+```{r}
+
+# Find the position of "Statewide Average:" in the text
+statewide_position <- regexpr("(?i)Statewide Average:", snow_pack_pdf_text)
+
+# If "Statewide Average:" is found, find the position of the numeric value after it
+if (statewide_position > 0) {
+  # Get the substring starting from the position of "Statewide Average:"
+  substring_after_statewide <- substring(snow_pack_pdf_text, statewide_position)
+  
+  # Extract both percentages from the matched text
+  statewide_percentages <- regmatches(substring_after_statewide, gregexpr("\\d+%", substring_after_statewide))[[1]]
+  
+  # Print the second percentage
+  if (length(statewide_percentages) >= 2) {
+    print(statewide_percentages[2])
+  } else {
+    print("Second percentage after 'Statewide Average:' not found.")
+  }
+} else {
+  print("Statewide Average information not found.")
+}
+
+
+```
+                      
+
+
+
+
