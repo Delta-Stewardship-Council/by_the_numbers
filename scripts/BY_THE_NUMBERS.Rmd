@@ -18,6 +18,11 @@ library(rvest)
 #install.packages("pdftools")
 library(pdftools)
 library(tidyverse)
+library(stringr)
+#install.packages("rvest")
+#install.packages("xml2")
+library(rvest)
+library(xml2)
 
 
 ```
@@ -51,30 +56,6 @@ print(northern_pdf_text)
 
 ```
 
-#Pulling the 'current' precipitation for Northern Sierra (using that starts on line 79)
-```{r}
-
-# Assuming pdf_file contains the path to the PDF file you downloaded earlier
-# Extract text from the PDF
-pdf_text <- pdf_text(pdf_file)
-
-# Print the next four characters following "Current:" in each sentence
-if (length(pdf_text) > 0) {
-  for (sentence in pdf_text) {
-    pattern <- "(?i)Current:\\s?(.{4})"
-    next_four <- regmatches(sentence, regexpr(pattern, sentence, perl = TRUE))
-    if (length(next_four) > 0) {
-      print(paste("Current:", next_four))
-    } else {
-      print("Next four characters after 'Current:' not found.")
-    }
-  }
-} else {
-  print("No text extracted from the PDF.")
-}
-
-
-```
 
 #Pulling the 'current' precipitation inches for Northern Sierra
 ```{r}
@@ -105,7 +86,7 @@ print(northern_next_four_values)
 
 
 ```
-#Northern Sierra
+#Northern Sierra  **** this one wasnt working ****
 # Pulling out percent average for this date
 ```{r}
 #create an empty vector
@@ -134,6 +115,43 @@ if (length(northern_pdf_text) > 0) {
 # Print the values of next_four_values
 print(northern_next_four_values_average)
 
+
+```
+
+
+#Northern Sierra
+# Pulling out percent average for this date
+```{r}
+
+# Create an empty vector to store the extracted values
+northern_next_four_values_average <- c()
+
+# Extract text from the PDF file
+northern_pdf_text <- pdf_text(northern_pdf_file)
+
+# Print the next four characters following "Percent of Average for this Date:" in each sentence
+if (length(northern_pdf_text) > 0) {
+  for (sentence in northern_pdf_text) {
+    # Define the pattern to match the "Percent of Average for this Date:" followed by the percentage value
+    pattern <- "(?i)Percent of Average for this Date:\\s*(\\d+%)"
+    
+    # Extract the match using regmatches and regexpr
+    northern_next_four <- regmatches(sentence, regexpr(pattern, sentence, perl = TRUE))
+    
+    if (length(northern_next_four) > 0) {
+      # Append the value to the vector
+      northern_next_four_values_average <- c(northern_next_four_values_average, northern_next_four)
+      print(paste("Percent of Average for this Date:", northern_next_four))
+    } else {
+      print("Percent of Average for this Date not found.")
+    }
+  }
+} else {
+  print("No text extracted from the PDF.")
+}
+
+# Print the values of northern_next_four_values_average
+print(northern_next_four_values_average)
 
 ```
 
@@ -169,8 +187,6 @@ print(central_pdf_text)
 #create an empty vector
 central_next_four_values <- c()
 
-# Extract text from the PDF file
-central_pdf_text <- pdf_text(central_ppt_pdf_file)
 
 # Print the next four characters following "Current:" in each sentence
 if (length(central_pdf_text) > 0) {
@@ -199,8 +215,7 @@ print(central_next_four_values)
 ```{r}
 #create and empty vector 
 central_current_ppt <- c()
-# Extract text from the PDF file
-central_pdf_text <- pdf_text(central_ppt_pdf_file)
+
 
 # Print the next four characters following "Current:" in each sentence
 if (length(central_pdf_text) > 0) {
@@ -382,7 +397,7 @@ if (state_position > 0) {
 }
 
 ```
-#Percent of normal for this date (%)
+#Percent of normal snow pack for this date (%)
 ```{r}
 
 # Find the position of "Statewide Average:" in the text
@@ -409,6 +424,58 @@ if (statewide_position > 0) {
 
 ```
                       
+################### Reservoir Storage ################
+
+```{r}
+
+# URL of the website to scrape
+reservoir_url <- "https://cdec.water.ca.gov/reportapp/javareports?name=RES"
+
+# Read the web page
+reservoir_web_page <- read_html(reservoir_url)
+
+# Extract the table node
+reservoir_table_node <- html_node(reservoir_web_page, "table")
+
+# Extract the table content into a data frame
+reservoir_table_data <- html_table(reservoir_table_node)
+
+# Print the entire table data
+print(reservoir_table_data)
+
+# Extract a specific numbers [row, column]
+#Shasta (at Sacramento River)
+#extract percent of average storage
+shasta_percent_average_storage <- reservoir_table_data[10, 9]
+print(shasta_percent_average_storage)
+#extract percent of capacity
+shasta_percent_capacity<-reservoir_table_data[10,7]
+print(shasta_percent_capacity)
+
+
+# Extract a specific numbers [row, column]
+#Oroville (at Feather River)
+#extract percent of average storage
+oroville_percent_average_storage <- reservoir_table_data[13, 9]
+print(oroville_percent_average_storage)
+#extract percent of capacity
+oroville_percent_capacity<-reservoir_table_data[13,7]
+print(oroville_percent_capacity)
+
+
+# Extract a specific numbers [row, column]
+#San Luis (at San Luis Creek)
+#extract percent of average storage
+SanLuis_percent_average_storage <- reservoir_table_data[56, 9]
+print(SanLuis_percent_average_storage)
+#extract percent of capacity
+SanLuis_percent_capacity<-reservoir_table_data[56,7]
+print(SanLuis_percent_capacity)
+
+```
+
+################### Flow Sacramento ###########################
+
 
 
 
