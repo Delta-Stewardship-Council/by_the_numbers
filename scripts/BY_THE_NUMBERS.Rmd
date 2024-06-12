@@ -24,8 +24,26 @@ library(stringr)
 library(rvest)
 library(xml2)
 
+#install.packages("devtools")
+#devtools::install_github("flowwest/CDECRetrieve")
+library(CDECRetrieve)
+
+library(magrittr)
+#install.packages("leaflet")
+library(leaflet)
+#install.packages("writexl")
+library(writexl)
+#install.packages("readxl")
+library(readxl)
+
+#install.packages("lubridate")
+library(lubridate)
+#install.packages("openxlsx")
+library(openxlsx)
+
 
 ```
+####################  Precipitation   ##############################
 
 #Pulling and downloading the pdf from online for Northern Sierra precpipitation
 ```{r}
@@ -59,7 +77,7 @@ print(northern_pdf_text)
 
 #Pulling the 'current' precipitation inches for Northern Sierra
 ```{r}
-northern_next_four_values <- c()
+N_sierra_current_precip <- c()
 
 # Extract text from the PDF file
 northern_pdf_text <- pdf_text(northern_pdf_file)
@@ -71,7 +89,7 @@ if (length(northern_pdf_text) > 0) {
     northern_next_four <- regmatches(sentence, regexpr(pattern, sentence, perl = TRUE))
     if (length(northern_next_four) > 0) {
       # Append the value of next_four to the vector
-      northern_next_four_values <- c(northern_next_four_values, northern_next_four)
+      N_sierra_current_precip <- c(N_sierra_current_precip, northern_next_four)
       print(paste("Current:", northern_next_four))
     } else {
       print("Next four characters after 'Current:' not found.")
@@ -81,42 +99,12 @@ if (length(northern_pdf_text) > 0) {
   print("No text extracted from the PDF.")
 }
 
-# Print the values of next_four_values
-print(northern_next_four_values)
+# Print the values of N_sierra_current_precip
+print(N_sierra_current_precip)
 
 
 ```
-#Northern Sierra  **** this one wasnt working ****
-# Pulling out percent average for this date
-```{r}
-#create an empty vector
-northern_next_four_values_average <- c()
 
-# Extract text from the PDF file
-northern_pdf_text <- pdf_text(northern_pdf_file)
-
-# Print the next four characters following "Current:" in each sentence
-if (length(northern_pdf_text) > 0) {
-  for (sentence in northern_pdf_text) {
-    pattern <- "(?i)Percent of Average for this Date:\\s?(.{4})"
-    northern_next_four <- regmatches(sentence, regexpr(pattern, sentence, perl = TRUE))
-    if (length(next_four) > 0) {
-      # Append the value of next_four to the vector
-      northern_next_four_values_average <- c(northern_next_four_values_average, northern_next_four)
-      print(paste("Percent of Average for this Date:", northern_next_four_values_average))
-    } else {
-      print("Next four characters after 'Percent of Average for this Date:' not found.")
-    }
-  }
-} else {
-  print("No text extracted from the PDF.")
-}
-
-# Print the values of next_four_values
-print(northern_next_four_values_average)
-
-
-```
 
 
 #Northern Sierra
@@ -124,7 +112,7 @@ print(northern_next_four_values_average)
 ```{r}
 
 # Create an empty vector to store the extracted values
-northern_next_four_values_average <- c()
+N_sierra_average_precip <- c()
 
 # Extract text from the PDF file
 northern_pdf_text <- pdf_text(northern_pdf_file)
@@ -140,7 +128,7 @@ if (length(northern_pdf_text) > 0) {
     
     if (length(northern_next_four) > 0) {
       # Append the value to the vector
-      northern_next_four_values_average <- c(northern_next_four_values_average, northern_next_four)
+      N_sierra_average_precip <- c(N_sierra_average_precip, northern_next_four)
       print(paste("Percent of Average for this Date:", northern_next_four))
     } else {
       print("Percent of Average for this Date not found.")
@@ -150,8 +138,9 @@ if (length(northern_pdf_text) > 0) {
   print("No text extracted from the PDF.")
 }
 
-# Print the values of northern_next_four_values_average
-print(northern_next_four_values_average)
+# Print the values of N_sierra_average_precip
+print(N_sierra_average_precip)
+
 
 ```
 
@@ -185,8 +174,7 @@ print(central_pdf_text)
 #PUlling out Percent average
 ```{r}
 #create an empty vector
-central_next_four_values <- c()
-
+Central_average_precip <- c()
 
 # Print the next four characters following "Current:" in each sentence
 if (length(central_pdf_text) > 0) {
@@ -195,7 +183,7 @@ if (length(central_pdf_text) > 0) {
     next_four <- regmatches(sentence, regexpr(pattern, sentence, perl = TRUE))
     if (length(next_four) > 0) {
       # Append the value of next_four to the vector
-      central_next_four_values <- c(central_next_four_values, next_four)
+      Central_average_precip <- c(Central_average_precip, next_four)
       print(paste("Percent of Average for this Date:", next_four))
     } else {
       print("Next four characters after 'Current:' not found.")
@@ -205,17 +193,17 @@ if (length(central_pdf_text) > 0) {
   print("No text extracted from the PDF.")
 }
 
-# Print the values of next_four_values
-print(central_next_four_values)
+# Print the values of Central_average_precip
+print(Central_average_precip)
+
 
 ```
 
 # Central Sierra
 # #Pulling the 'current' precipitation inches for Central Sierra
 ```{r}
-#create and empty vector 
-central_current_ppt <- c()
-
+#create an empty vector 
+Central_current_precip <- c()
 
 # Print the next four characters following "Current:" in each sentence
 if (length(central_pdf_text) > 0) {
@@ -224,7 +212,7 @@ if (length(central_pdf_text) > 0) {
     next_four <- regmatches(sentence, regexpr(pattern, sentence, perl = TRUE))
     if (length(next_four) > 0) {
       # Append the value of next_four to the vector
-      central_current_ppt <- c(central_current_ppt, next_four)
+      Central_current_precip <- c(Central_current_precip, next_four)
       print(paste("Current:", next_four))
     } else {
       print("Next four characters after 'Current:' not found.")
@@ -234,13 +222,13 @@ if (length(central_pdf_text) > 0) {
   print("No text extracted from the PDF.")
 }
 
-# Print the values of next_four_values
-print(central_current_ppt)
+# Print the values of Central_current_precip
+print(Central_current_precip)
 
 ```
 
-##########################################################
-                      # SNOW PACK #
+####################################################################################
+####################            SNOW PACK          ##################################
 
 ```{r}
 #URL of pdf file
@@ -293,6 +281,9 @@ if (length(north_match) > 0) {
 }
 
 ```
+
+
+
 #north snow water equivalent
 ```{r}
 
@@ -304,11 +295,10 @@ snow_water_line <- regmatches(snow_pack_pdf_text, regexpr(pattern, snow_pack_pdf
 
 # Check if the line is found
 if (length(snow_water_line) > 0) {
-  print(snow_water_line)
+  print(paste("Northern Sierra", snow_water_line))
 } else {
   print("Snow water equivalent information not found.")
 }
-
 
 ```
 #Central % Snow average snow pack
@@ -338,6 +328,42 @@ if (length(central_match) > 0) {
 ```
 #Central snow water equivalent
 ```{r}
+# # Find the position of "Central Sierra" in the text
+# central_sierra_position <- regexpr("(?i)Central Sierra", snow_pack_pdf_text)
+# 
+# # If "Central Sierra" is found, find the position of "Average snow water equivalent (Inches)" after it
+# if (central_sierra_position > 0) {
+#   # Get the substring starting from the position of "Central Sierra"
+#   substring_after_central <- substring(snow_pack_pdf_text, central_sierra_position)
+#   
+#   # Find the position of "Average snow water equivalent (Inches)" within the substring
+#   snow_water_position <- regexpr("(?i)Average snow water equivalent \\(Inches\\)", substring_after_central)
+#   
+#   # If "Average snow water equivalent (Inches)" is found, extract the numeric value following it
+#   if (snow_water_position > 0) {
+#     # Get the substring starting from the position of "Average snow water equivalent (Inches)"
+#     snow_water_substring <- substring(substring_after_central, snow_water_position)
+#     
+#     # Extract the numeric value following "Average snow water equivalent (Inches)"
+#     snow_water_value <- regmatches(snow_water_substring, regexpr("\\d+\\.\\d+", snow_water_substring))
+#     
+#     # If a numeric value is found, print it
+#     if (length(snow_water_value) > 0) {
+#       print(snow_water_value)
+#     } else {
+#       print("Snow water equivalent value not found.")
+#     }
+#   } else {
+#     print("Average snow water equivalent information not found for Central Sierra.")
+#   }
+# } else {
+#   print("Central Sierra information not found.")
+# }
+
+
+### make sure below code works all the time ***6/11/24
+
+
 # Find the position of "Central Sierra" in the text
 central_sierra_position <- regexpr("(?i)Central Sierra", snow_pack_pdf_text)
 
@@ -357,9 +383,9 @@ if (central_sierra_position > 0) {
     # Extract the numeric value following "Average snow water equivalent (Inches)"
     snow_water_value <- regmatches(snow_water_substring, regexpr("\\d+\\.\\d+", snow_water_substring))
     
-    # If a numeric value is found, print it
+    # If a numeric value is found, print it with the desired text
     if (length(snow_water_value) > 0) {
-      print(snow_water_value)
+      print(paste("Central snow water equivalent", snow_water_value))
     } else {
       print("Snow water equivalent value not found.")
     }
@@ -372,7 +398,7 @@ if (central_sierra_position > 0) {
 
 
 ```
-# State average snow pack: water year
+# State wide average snow pack: water year
 ```{r}
 
 # Find the position of "State" in the text
@@ -476,7 +502,306 @@ print(SanLuis_percent_capacity)
 
 ################### Flow Sacramento ###########################
 
+#collapsed code chunk makes a bad map of sacramento sensors
+```{r}
+
+#this makes a map of all sacramento CDEC stations
+cdec_stations(county = "sacramento") %>% 
+  map_stations()
+
+```
+
+#Do not need to run
+```{r}
+#find which number corresponds to the correct sensor for Sacramento 
+station_FPT <- "FPT"
+cdec_datasets("FPT")
+
+#find which number corresponds to the correct sensor for Vernalis
+station_VNS <- "VNS"
+cdec_datasets("VNS")
+
+
+```
+
+
+#Create data set of exports from Sacramento and San Joaquin River at Vernalis 
+#take Monthly average of those data sets
+```{r}
+###################        Sacramento     #############################
+
+#Each month need to change "start_date" (Year, Month, Day)
+#sensor number is determined by the previous code chunk (do not need to change)
+
+#Sacramento
+start_date <- floor_date(Sys.Date(), "month")
+
+# Get the current date
+end_date <- Sys.Date()
+
+# Query CDEC data from the first of the month to the current date
+sac_flow_daily <- cdec_query(station = "FPT", sensor_num = 20, 
+                             dur_code = "D", start_date = as.character(start_date), 
+                             end_date = as.character(end_date))
+
+
+#need to take the average of all parameter_value for the date 
+sacramento_export_monthly_average<-mean(sac_flow_daily$parameter_value, na.rm = T)
+```
+
+
+
+```{r}
+###################  San Joaquin River at Vernalis  #####################
+
+# Get the first day of the current month
+start_date <- floor_date(Sys.Date(), "month")
+
+# Get the current date
+end_date <- Sys.Date()
+
+#  ***** dur_code = "D" not working, --> should theoretically get same values using "H" (hourly)
+# Query CDEC data from the first of the month to the current date
+SanJoaquin_flow_daily <- cdec_query(station = "VNS", sensor_num = 20, 
+                                    dur_code = "H", start_date = as.character(start_date), 
+                                    end_date = as.character(end_date))
+
+# View the result
+print(SanJoaquin_flow_daily)
+
+
+#need to take the average of all parameter_value for the date 
+SanJoaquin_export_monthly_average<-mean(SanJoaquin_flow_daily$parameter_value, na.rm = T)
+SanJoaquin_export_monthly_average
+```
+#Total Delta Exports: 'total delta exports', average of (CVP + SWP)
+#When run, will automatically update for current month
+```{r}
+
+# URL of the PDF file
+delta_exports_pdf_url <- "https://www.usbr.gov/mp/cvo/vungvari/doutdly.pdf"
+
+# Path to save the downloaded PDF file
+delta_exports_pdf_file <- "C:/Users/jweidenfeld/Desktop/Rprojects/By_The_Numbers/data_output/delta_exports.pdf"
+
+# Download the PDF file
+download.file(delta_exports_pdf_url, delta_exports_pdf_file, mode = "wb")
+
+# Extract text from the PDF file
+delta_exports_pdf_text <- pdf_text(delta_exports_pdf_file)
+
+print(delta_exports_pdf_text)
+
+
+
+delta_export_first_page_text <- delta_exports_pdf_text[1]
+
+# Print the extracted text to determine the pattern
+cat(delta_export_first_page_text)
+
+# Split the text into lines
+delta_export_lines <- str_split(delta_export_first_page_text, "\n")[[1]] 
+#"\n" is the new line character, splits the text into lines
+#[[1]] extracts the first element from the list 
+
+
+
+# Extract lines containing the table data
+delta_export_table_lines <- delta_export_lines[str_detect(delta_export_lines, "\\d{2,4}")]
+
+# Split each line into columns based on whitespace
+delta_export_table_data <- map(delta_export_table_lines, ~str_split(.x, "\\s+")[[1]])
+
+# Find the maximum number of columns
+delta_export_max_cols <- max(sapply(delta_export_table_data, length))
+
+# Pad shorter rows with NA values
+delta_export_padded_table_data <- lapply(delta_export_table_data, function(row) {
+  length(row) <- delta_export_max_cols
+  row
+})
+
+# Convert the padded list of lists into a data frame
+delta_export_table_df <- do.call(rbind, lapply(delta_export_padded_table_data, function(x) data.frame(matrix(x, ncol = delta_export_max_cols, byrow = TRUE), stringsAsFactors = FALSE)))
+
+# Print the data frame
+print(delta_export_table_df)
+
+
+# Extract a specific number (example: first row, second column)
+average_delta_export_value<-delta_export_table_df[36, 17]
+print(average_delta_export_value)
+
+```
+
+##*** figure out way to add data from this year to historical after year ends
+#somethign that updates only on specific dates
+#Need to create a output csv file for historical data
+```{r}
+# read_xlxs() by default reads in the first sheet. There may however be numerous sheets in the file. We can tell R which sheet to read in as well as how many lines to skip before reading in data
+
+#tells R to skip 6 lines and then read in the second sheet of an xlsx file
+metadata<-read_xlsx("data/calenviroscreen/ces3results.xlsx", 
+                      sheet = 2, 
+                      skip  = 6)
+
+#as of now data has to be added manually at the end of the year to the historical data set
+
+```
 
 
 
 
+################################## Salinity #####################################
+
+#Sacramento River at Hood (station code SRH)
+#When run, will automatically update for current month
+```{r}
+
+# Get the first day of the current month
+start_date <- floor_date(Sys.Date(), "month")
+
+# Get the current date
+end_date <- Sys.Date()
+
+# Query CDEC data from the first of the month to the current date
+sac_cond_daily_new <- cdec_query(station = "SRH", sensor_num = "100", 
+                             dur_code = "D", start_date = as.character(start_date), 
+                             end_date = as.character(end_date))
+Sac_cond_monthly_average<-mean(sac_cond_daily_new$parameter_value, na.rm = T)
+Sac_cond_monthly_average
+
+```
+#San Joaquin River at Vernalis (station code - VER)
+#When run, will automatically update for current month
+```{r}
+
+# Get the first day of the current month
+start_date <- floor_date(Sys.Date(), "month")
+
+# Get the current date
+end_date <- Sys.Date()
+
+# Query CDEC data from the first of the month to the current date
+SanJoaquin_cond_daily_new <- cdec_query(station = "VER", sensor_num = "100", 
+                             dur_code = "D", start_date = as.character(start_date), 
+                             end_date = as.character(end_date))
+
+
+SanJoaquin_cond_monthly_average<-mean(SanJoaquin_cond_daily_new$parameter_value, na.rm = T)
+SanJoaquin_cond_monthly_average
+```
+
+
+#Exports at Banks pumping plant (station code - HBP)
+#When run, will automatically update for current month
+```{r}
+
+
+# Get the first day of the current month
+start_date <- floor_date(Sys.Date(), "month")
+
+# Get the current date
+end_date <- Sys.Date()
+
+# Query CDEC data from the first of the month to the current date
+Banks_cond_daily_new <- cdec_query(station = "HBP", sensor_num = "100", 
+                             dur_code = "D", start_date = as.character(start_date), 
+                             end_date = as.character(end_date))
+
+
+
+#need to take the average of all parameter_value for the date 
+Banks_export_monthly_average<-mean(Banks_cond_daily_new$parameter_value, na.rm = T)
+Banks_export_monthly_average
+
+
+#convert um/cm to ppm
+#idea to have some historical context with the salinity?
+
+```
+
+
+
+###########################################             TEMPERATURE            #################################################
+#need to add hisotrical average data in --> will add to csv file eventually 
+
+
+#Water Temp - Sacramento river headwaters at Clear Creek
+```{r}
+
+# Get the first day of the current month
+start_date <- floor_date(Sys.Date(), "month")
+
+# Get the current date
+end_date <- Sys.Date()
+
+# Query CDEC data from the first of the month to the current date
+SacClearCreek_waterTemp_new <- cdec_query(station = "IGO", sensor_num = "25", 
+                             dur_code = "H", start_date = as.character(start_date), 
+                             end_date = as.character(end_date))
+
+
+
+#need to take the average of all parameter_value for the date 
+SacClearCreek_waterTemp_monthly_average<-mean(SacClearCreek_waterTemp_new$parameter_value, na.rm = T)
+SacClearCreek_waterTemp_monthly_average
+
+
+
+#cdec_datasets("IGO")
+
+```
+
+
+
+#Water Temp - Sacramento/San Joaquin Rivers confluence at Collinsville 
+```{r}
+
+# Get the first day of the current month
+start_date <- floor_date(Sys.Date(), "month")
+
+# Get the current date
+end_date <- Sys.Date()
+
+# Query CDEC data from the first of the month to the current date
+SacSanJoaquin_waterTemp_new <- cdec_query(station = "CSE", sensor_num = "25", 
+                             dur_code = "H", start_date = as.character(start_date), 
+                             end_date = as.character(end_date))
+
+
+
+#need to take the average of all parameter_value for the date 
+SacSanJoaquin_waterTemp_monthly_average<-mean(SacSanJoaquin_waterTemp_new$parameter_value, na.rm = T)
+SacSanJoaquin_waterTemp_monthly_average
+
+
+```
+
+#Water Temp - South Delta (near HBP) at Clifton Court Forebay
+```{r}
+
+cdec_datasets("CLC")
+
+# Get the first day of the current month
+start_date <- floor_date(Sys.Date(), "month")
+
+# Get the current date
+end_date <- Sys.Date()
+
+# Query CDEC data from the first of the month to the current date
+SouthDelta_waterTemp_new <- cdec_query(station = "CLC", sensor_num = "146", 
+                             dur_code = "H", start_date = as.character(start_date), 
+                             end_date = as.character(end_date))
+
+
+
+#because CLC temp gage only have readings in Celcius, need to convert to F
+
+SouthDelta_waterTemp_new$parameter_F<-(SouthDelta_waterTemp_new$parameter_value*( 9/5) + 32)
+
+#need to take the average of all parameter_value for the date 
+SouthDelta_waterTemp_monthly_average_F<-mean(SouthDelta_waterTemp_new$parameter_F, na.rm = T)
+SouthDelta_waterTemp_monthly_average_F
+
+```
