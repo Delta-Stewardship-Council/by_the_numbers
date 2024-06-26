@@ -514,12 +514,12 @@ cdec_stations(county = "sacramento") %>%
 #Do not need to run
 ```{r}
 #find which number corresponds to the correct sensor for Sacramento 
-station_FPT <- "FPT"
-cdec_datasets("FPT")
+#station_FPT <- "FPT"
+#cdec_datasets("FPT")
 
 #find which number corresponds to the correct sensor for Vernalis
-station_VNS <- "VNS"
-cdec_datasets("VNS")
+#station_VNS <- "VNS"
+#cdec_datasets("VNS")
 
 
 ```
@@ -671,6 +671,10 @@ sac_cond_daily_new <- cdec_query(station = "SRH", sensor_num = "100",
 Sac_cond_monthly_average<-mean(sac_cond_daily_new$parameter_value, na.rm = T)
 Sac_cond_monthly_average
 
+#### ppm conversion
+sac_ppm<-(Sac_cond_monthly_average*0.55)
+
+
 ```
 #San Joaquin River at Vernalis (station code - VER)
 #When run, will automatically update for current month
@@ -690,10 +694,14 @@ SanJoaquin_cond_daily_new <- cdec_query(station = "VER", sensor_num = "100",
 
 SanJoaquin_cond_monthly_average<-mean(SanJoaquin_cond_daily_new$parameter_value, na.rm = T)
 SanJoaquin_cond_monthly_average
+
+#### ppm conversion
+SanJoa_ppm<-(SanJoaquin_cond_monthly_average*0.55)
+SanJoa_ppm
 ```
 
 
-#Exports at Banks pumping plant (station code - HBP)
+#Salinity at Banks pumping plant (station code - HBP)
 #When run, will automatically update for current month
 ```{r}
 
@@ -712,13 +720,15 @@ Banks_cond_daily_new <- cdec_query(station = "HBP", sensor_num = "100",
 
 
 #need to take the average of all parameter_value for the date 
-Banks_export_monthly_average<-mean(Banks_cond_daily_new$parameter_value, na.rm = T)
-Banks_export_monthly_average
+Banks_cond_monthly_average<-mean(Banks_cond_daily_new$parameter_value, na.rm = T)
+Banks_cond_monthly_average
 
 
 #convert um/cm to ppm
 #idea to have some historical context with the salinity?
-
+#### ppm conversion
+Banks_ppm<-(Banks_cond_monthly_average*0.55)
+Banks_ppm
 ```
 
 
