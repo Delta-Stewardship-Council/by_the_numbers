@@ -529,7 +529,6 @@ cdec_stations(county = "sacramento") %>%
 #take Monthly average of those data sets
 ```{r}
 ###################        Sacramento     #############################
-
 #Each month need to change "start_date" (Year, Month, Day)
 #sensor number is determined by the previous code chunk (do not need to change)
 
