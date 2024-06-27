@@ -1,0 +1,10 @@
+project:
+  type: website
+
+
+website:
+  title: "By The Numbers"
+  navbar:
+    left:
+      - index.qmd
+      - about.qmd
