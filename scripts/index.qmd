@@ -1,32 +1,44 @@
 ---
-title: "By The Numbers"
-format: html
-editor: visual
-execute: 
-  echo: false
+title: "Whats going on in the Delta Wateshed"
 ---
 
-```{r}
+------------------------------------------------------------------------
 
+------------------------------------------------------------------------
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+```{r, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
+rm(list=ls())
+
+#install.packages("rvest")
 library(rvest)
-
+#install.packages("pdftools")
 library(pdftools)
 library(tidyverse)
 library(stringr)
-
+#install.packages("rvest")
+#install.packages("xml2")
 library(rvest)
 library(xml2)
+
+#install.packages("devtools")
+#devtools::install_github("flowwest/CDECRetrieve")
 library(CDECRetrieve)
 
 library(magrittr)
-
+#install.packages("leaflet")
 library(leaflet)
-
+#install.packages("writexl")
 library(writexl)
-
+#install.packages("readxl")
 library(readxl)
+
+#install.packages("lubridate")
 library(lubridate)
+#install.packages("openxlsx")
 library(openxlsx)
 
 
@@ -34,7 +46,21 @@ library(openxlsx)
 
 #################### Precipitation
 
-#Pulling and downloading the pdf from online for Northern Sierra precpipitation
+-Crucial to the Delta Watershed as it provides water for the Delta!
+
+-   **Water Supply**
+
+-   **Ecosystem Health**
+
+-   **Agricultural Support**
+
+-   **Flood Control**
+
+-   **Salinity Control**
+
+-   **Hydropower Generation**
+
+-   **Recreation and Tourism**
 
 ```{r}
 
@@ -60,13 +86,15 @@ download.file(northern_pdf_url, northern_pdf_file, mode = "wb")
 northern_pdf_text <- pdf_text(northern_pdf_file)
 
 # Print the extracted text
-print(northern_pdf_text)
+#print(northern_pdf_text)
 
 ```
 
-#Pulling the 'current' precipitation inches for Northern Sierra
+###### Current Precipitation for Northern Sierra Region {style="color: darkblue"}
 
 ```{r}
+
+# Initialize an empty vector to store the extracted values
 N_sierra_current_precip <- c()
 
 # Extract text from the PDF file
@@ -76,66 +104,72 @@ northern_pdf_text <- pdf_text(northern_pdf_file)
 if (length(northern_pdf_text) > 0) {
   for (sentence in northern_pdf_text) {
     pattern <- "(?i)Current:\\s?(.{4})"
-    northern_next_four <- regmatches(sentence, regexpr(pattern, sentence, perl = TRUE))
-    if (length(northern_next_four) > 0) {
-      # Append the value of next_four to the vector
-      N_sierra_current_precip <- c(N_sierra_current_precip, northern_next_four)
-      print(paste("Current:", northern_next_four))
+    match <- regexpr(pattern, sentence, perl = TRUE)
+    if (match[1] != -1) {
+      northern_next_four <- regmatches(sentence, match)
+      # Extract the captured group (the four characters) and append to the vector
+      next_four <- sub(pattern, "\\1", northern_next_four)
+      N_sierra_current_precip <- c(N_sierra_current_precip, next_four)
+      # Print the formatted output as "Current: <next_four>"
+      cat(paste("Current:", next_four, "inches"))
     } else {
-      print("Next four characters after 'Current:' not found.")
+      cat("Next four characters after 'Current:' not found.")
     }
   }
 } else {
-  print("No text extracted from the PDF.")
+  cat("No text extracted from the PDF.")
 }
 
-# Print the values of N_sierra_current_precip
-print(N_sierra_current_precip)
+
 
 
 ```
 
-#Northern Sierra \# Pulling out percent average for this date
+Northern Sierra Region: Percent of average rain for this date
 
 ```{r}
-
-# Create an empty vector to store the extracted values
+# Create an empty vector to store the extracted value
 N_sierra_average_precip <- c()
 
 # Extract text from the PDF file
 northern_pdf_text <- pdf_text(northern_pdf_file)
 
-# Print the next four characters following "Percent of Average for this Date:" in each sentence
+# Check if the PDF text is not empty
 if (length(northern_pdf_text) > 0) {
-  for (sentence in northern_pdf_text) {
-    # Define the pattern to match the "Percent of Average for this Date:" followed by the percentage value
-    pattern <- "(?i)Percent of Average for this Date:\\s*(\\d+%)"
+  # Concatenate all the text into a single string
+  combined_text <- paste(northern_pdf_text, collapse = " ")
+  
+  # Define the pattern to match the "Percent of Average for this Date:" followed by the percentage value
+  pattern <- "(?i)Percent of Average for this Date:\\s*(\\d+%)"
+  
+  # Extract the match using regmatches and regexpr
+  northern_next_four <- regmatches(combined_text, regexpr(pattern, combined_text, perl = TRUE))
+  
+  if (length(northern_next_four) > 0) {
+    # Extract the percentage value using a capturing group
+    percent_value <- sub("(?i)Percent of Average for this Date:\\s*(\\d+%)", "\\1", northern_next_four)
     
-    # Extract the match using regmatches and regexpr
-    northern_next_four <- regmatches(sentence, regexpr(pattern, sentence, perl = TRUE))
+    # Append the value to the vector
+    N_sierra_average_precip <- c(N_sierra_average_precip, percent_value)
     
-    if (length(northern_next_four) > 0) {
-      # Append the value to the vector
-      N_sierra_average_precip <- c(N_sierra_average_precip, northern_next_four)
-      print(paste("Percent of Average for this Date:", northern_next_four))
-    } else {
-      print("Percent of Average for this Date not found.")
-    }
+    # Print only the percentage value
+    cat(percent_value, "\n")
+  } else {
+    cat("Percent of Average for this Date not found.\n")
   }
 } else {
-  print("No text extracted from the PDF.")
+  cat("No text extracted from the PDF.\n")
 }
 
-# Print the values of N_sierra_average_precip
-print(N_sierra_average_precip)
 
 
 ```
 
+Current Precipitation for Central Sierra Region
+
+```{r, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
+
 #Central Sierra precipitation #Pulling and downloading the pdf from online
-
-```{r}
-
 #URL of pdf file
 
 # ***** need to see if this pdf updates everyday with the same URL *******
@@ -159,9 +193,12 @@ print(central_pdf_text)
 
 ```
 
-#Central Sierra #PUlling out Percent average
+Central Sierra Region: Percent of average rain for this date
 
 ```{r}
+
+#Central Sierra #PUlling out Percent average
+
 #create an empty vector
 Central_average_precip <- c()
 
@@ -173,24 +210,23 @@ if (length(central_pdf_text) > 0) {
     if (length(next_four) > 0) {
       # Append the value of next_four to the vector
       Central_average_precip <- c(Central_average_precip, next_four)
-      print(paste("Percent of Average for this Date:", next_four))
+      cat(paste(next_four))
     } else {
-      print("Next four characters after 'Current:' not found.")
+      cat("Next four characters after 'Current:' not found.")
     }
   }
 } else {
-  print("No text extracted from the PDF.")
+  cat("No text extracted from the PDF.")
 }
 
-# Print the values of Central_average_precip
-print(Central_average_precip)
+
 
 
 ```
 
 # Central Sierra
 
-# #Pulling the 'current' precipitation inches for Central Sierra
+###### Current Precipitation for Central Sierra Region {style="color: darkblue"}
 
 ```{r}
 #create an empty vector 
@@ -204,17 +240,15 @@ if (length(central_pdf_text) > 0) {
     if (length(next_four) > 0) {
       # Append the value of next_four to the vector
       Central_current_precip <- c(Central_current_precip, next_four)
-      print(paste("Current:", next_four))
+      cat(paste( next_four, "inches"))
     } else {
-      print("Next four characters after 'Current:' not found.")
+      cat("Next four characters after 'Current:' not found.")
     }
   }
 } else {
-  print("No text extracted from the PDF.")
+  cat("No text extracted from the PDF.")
 }
 
-# Print the values of Central_current_precip
-print(Central_current_precip)
 
 ```
 
@@ -222,7 +256,7 @@ print(Central_current_precip)
 
 #################### SNOW PACK
 
-```{r}
+```{r, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
 #URL of pdf file
 
 # ***** need to see if this pdf updates everyday with the same URL *******
@@ -263,12 +297,12 @@ if (length(north_match) > 0) {
   
   # Print the extracted percentage
   if (length(north_percentages) >= 2) {
-    print(paste("NORTH", north_percentages[2], "of percent avg. to date snow pack"))
+    cat(paste("Northern CA:", north_percentages[2], "of percent avgerage to date snow pack"))
   } else {
-    print("Second percentage in the 'NORTH' section not found.")
+    cat("Second percentage in the 'NORTH' section not found.")
   }
 } else {
-  print("NORTH section not found.")
+  cat("NORTH section not found.")
 }
 
 ```
@@ -278,17 +312,24 @@ if (length(north_match) > 0) {
 ```{r}
 
 # Define the pattern to match the line containing the snow water equivalent information
-pattern <- "(?i)Average snow water equivalent \\(Inches\\)\\s+\\d+\\.\\d+"
+pattern <- "(?i)Average snow water equivalent \\(Inches\\)\\s+(\\d+\\.\\d+)"
 
 # Extract the line containing snow water equivalent information
 snow_water_line <- regmatches(snow_pack_pdf_text, regexpr(pattern, snow_pack_pdf_text, perl = TRUE))
 
 # Check if the line is found
 if (length(snow_water_line) > 0) {
-  print(paste("Northern Sierra", snow_water_line))
+  # Extract the numeric value
+  numeric_value <- sub("(?i)Average snow water equivalent \\(Inches\\)\\s+(\\d+\\.\\d+)", "\\1", snow_water_line)
+  
+  # Create the modified line with "inches" after the numeric value
+  modified_snow_water_line <- paste("average snow water equivalent", numeric_value, "inches")
+  
+  cat("Northern Sierra", modified_snow_water_line, "\n")
 } else {
-  print("Snow water equivalent information not found.")
+  cat("Snow water equivalent information not found.\n")
 }
+
 
 ```
 
@@ -308,12 +349,12 @@ if (length(central_match) > 0) {
   
   # Print the extracted percentage
   if (length(central_percentages) >= 2) {
-    print(paste("CENTRAL SIERRA", central_percentages[2], "of percent avg. to date snow pack"))
+    cat(paste("CENTRAL SIERRA", central_percentages[2], "of percent avg. to date snow pack"))
   } else {
-    print("Second percentage in the 'CENTRAL SIERRA' section not found.")
+    cat("Second percentage in the 'CENTRAL SIERRA' section not found.")
   }
 } else {
-  print("CENTRAL SIERRA section not found.")
+  cat("CENTRAL SIERRA section not found.")
 }
 
 
@@ -322,40 +363,6 @@ if (length(central_match) > 0) {
 #Central snow water equivalent
 
 ```{r}
-# # Find the position of "Central Sierra" in the text
-# central_sierra_position <- regexpr("(?i)Central Sierra", snow_pack_pdf_text)
-# 
-# # If "Central Sierra" is found, find the position of "Average snow water equivalent (Inches)" after it
-# if (central_sierra_position > 0) {
-#   # Get the substring starting from the position of "Central Sierra"
-#   substring_after_central <- substring(snow_pack_pdf_text, central_sierra_position)
-#   
-#   # Find the position of "Average snow water equivalent (Inches)" within the substring
-#   snow_water_position <- regexpr("(?i)Average snow water equivalent \\(Inches\\)", substring_after_central)
-#   
-#   # If "Average snow water equivalent (Inches)" is found, extract the numeric value following it
-#   if (snow_water_position > 0) {
-#     # Get the substring starting from the position of "Average snow water equivalent (Inches)"
-#     snow_water_substring <- substring(substring_after_central, snow_water_position)
-#     
-#     # Extract the numeric value following "Average snow water equivalent (Inches)"
-#     snow_water_value <- regmatches(snow_water_substring, regexpr("\\d+\\.\\d+", snow_water_substring))
-#     
-#     # If a numeric value is found, print it
-#     if (length(snow_water_value) > 0) {
-#       print(snow_water_value)
-#     } else {
-#       print("Snow water equivalent value not found.")
-#     }
-#   } else {
-#     print("Average snow water equivalent information not found for Central Sierra.")
-#   }
-# } else {
-#   print("Central Sierra information not found.")
-# }
-
-
-### make sure below code works all the time ***6/11/24
 
 
 # Find the position of "Central Sierra" in the text
@@ -379,15 +386,15 @@ if (central_sierra_position > 0) {
     
     # If a numeric value is found, print it with the desired text
     if (length(snow_water_value) > 0) {
-      print(paste("Central snow water equivalent", snow_water_value))
+      cat(paste("Central snow water equivalent", snow_water_value))
     } else {
-      print("Snow water equivalent value not found.")
+      cat("Snow water equivalent value not found.")
     }
   } else {
-    print("Average snow water equivalent information not found for Central Sierra.")
+    cat("Average snow water equivalent information not found for Central Sierra.")
   }
 } else {
-  print("Central Sierra information not found.")
+  cat("Central Sierra information not found.")
 }
 
 
@@ -408,15 +415,16 @@ if (state_position > 0) {
   # Extract the numeric value following "State"
   snow_water_value <- regmatches(substring_after_state, regexpr("\\d+\\.\\d+", substring_after_state))
   
-  # If a numeric value is found, print it
+  # If a numeric value is found, print it with the desired text
   if (length(snow_water_value) > 0) {
-    print(snow_water_value)
+    cat(paste("State wide average snow pack", snow_water_value))
   } else {
-    print("Snow water equivalent value not found.")
+    cat("Snow water equivalent value not found.")
   }
 } else {
-  print("State information not found.")
+  cat("State information not found.")
 }
+
 
 ```
 
@@ -435,22 +443,23 @@ if (statewide_position > 0) {
   # Extract both percentages from the matched text
   statewide_percentages <- regmatches(substring_after_statewide, gregexpr("\\d+%", substring_after_statewide))[[1]]
   
-  # Print the second percentage
+  # Print the second percentage with the desired text
   if (length(statewide_percentages) >= 2) {
-    print(statewide_percentages[2])
+    cat("Statewide average percent snow pack for this date", statewide_percentages[2], "\n")
   } else {
-    print("Second percentage after 'Statewide Average:' not found.")
+    cat("Second percentage after 'Statewide Average:' not found.")
   }
 } else {
-  print("Statewide Average information not found.")
+  cat("Statewide Average information not found.\n")
 }
+
 
 
 ```
 
 ################### Reservoir Storage
 
-```{r}
+```{r, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
 
 # URL of the website to scrape
 reservoir_url <- "https://cdec.water.ca.gov/reportapp/javareports?name=RES"
@@ -510,9 +519,10 @@ cdec_stations(county = "sacramento") %>%
 
 ```
 
-#Do not need to run
-
 ```{r}
+#This code helps identify where numbers respond to which sensors for each station
+
+
 #find which number corresponds to the correct sensor for Sacramento 
 #station_FPT <- "FPT"
 #cdec_datasets("FPT")
@@ -524,9 +534,10 @@ cdec_stations(county = "sacramento") %>%
 
 ```
 
-#Create data set of exports from Sacramento and San Joaquin River at Vernalis #take Monthly average of those data sets
-
 ```{r}
+
+#Create data set of exports from Sacramento and San Joaquin River at Vernalis #take Monthly average of those data sets 
+
 ###################        Sacramento     #############################
 #Each month need to change "start_date" (Year, Month, Day)
 #sensor number is determined by the previous code chunk (do not need to change)
@@ -547,7 +558,7 @@ sac_flow_daily <- cdec_query(station = "FPT", sensor_num = 20,
 sacramento_export_monthly_average<-mean(sac_flow_daily$parameter_value, na.rm = T)
 ```
 
-```{r}
+```{r, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
 ###################  San Joaquin River at Vernalis  #####################
 
 # Get the first day of the current month
@@ -564,17 +575,22 @@ SanJoaquin_flow_daily <- cdec_query(station = "VNS", sensor_num = 20,
 
 # View the result
 print(SanJoaquin_flow_daily)
+```
 
+#San Joaquin monthly average export
+
+```{r}
 
 #need to take the average of all parameter_value for the date 
 SanJoaquin_export_monthly_average<-mean(SanJoaquin_flow_daily$parameter_value, na.rm = T)
 SanJoaquin_export_monthly_average
 ```
 
-#Total Delta Exports: 'total delta exports', average of (CVP + SWP) #When run, will automatically update for current month
+```{r, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
 
-```{r}
+#Total Delta Exports: 'total delta exports', average of (CVP + SWP) 
 
+#When run, will automatically update for current month
 # URL of the PDF file
 delta_exports_pdf_url <- "https://www.usbr.gov/mp/cvo/vungvari/doutdly.pdf"
 
@@ -594,7 +610,7 @@ print(delta_exports_pdf_text)
 delta_export_first_page_text <- delta_exports_pdf_text[1]
 
 # Print the extracted text to determine the pattern
-cat(delta_export_first_page_text)
+print(delta_export_first_page_text)
 
 # Split the text into lines
 delta_export_lines <- str_split(delta_export_first_page_text, "\n")[[1]] 
@@ -623,7 +639,11 @@ delta_export_table_df <- do.call(rbind, lapply(delta_export_padded_table_data, f
 
 # Print the data frame
 print(delta_export_table_df)
+```
 
+#Total Delta Exports: 'total delta exports', average of (CVP + SWP)
+
+```{r}
 
 # Extract a specific number (example: first row, second column)
 average_delta_export_value<-delta_export_table_df[36, 17]
@@ -638,8 +658,8 @@ print(average_delta_export_value)
 
 #tells R to skip 6 lines and then read in the second sheet of an xlsx file
 #metadata<-read_xlsx("data/calenviroscreen/ces3results.xlsx", 
-                    #  sheet = 2, 
-                     # skip  = 6)
+ #                     sheet = 2, 
+  #                    skip  = 6)
 
 #as of now data has to be added manually at the end of the year to the historical data set
 
@@ -779,9 +799,9 @@ SacSanJoaquin_waterTemp_monthly_average
 
 ```
 
-#Water Temp - South Delta (near HBP) at Clifton Court Forebay
+```{r, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
 
-```{r}
+#Water Temp - South Delta (near HBP) at Clifton Court Forebay
 
 cdec_datasets("CLC")
 
@@ -801,7 +821,11 @@ SouthDelta_waterTemp_new <- cdec_query(station = "CLC", sensor_num = "146",
 #because CLC temp gage only have readings in Celcius, need to convert to F
 
 SouthDelta_waterTemp_new$parameter_F<-(SouthDelta_waterTemp_new$parameter_value*( 9/5) + 32)
+```
 
+#Water Temp - South Delta (near HBP) at Clifton Court Forebay
+
+```{r}
 #need to take the average of all parameter_value for the date 
 SouthDelta_waterTemp_monthly_average_F<-mean(SouthDelta_waterTemp_new$parameter_F, na.rm = T)
 SouthDelta_waterTemp_monthly_average_F
