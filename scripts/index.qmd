@@ -44,9 +44,9 @@ library(openxlsx)
 
 ```
 
-#################### Precipitation
+# Precipitation
 
--Crucial to the Delta Watershed as it provides water for the Delta!
+Crucial to the Delta Watershed as it provides water for the Delta!
 
 -   **Water Supply**
 
@@ -125,7 +125,7 @@ if (length(northern_pdf_text) > 0) {
 
 ```
 
-Northern Sierra Region: Percent of average rain for this date
+###### Northern Sierra Region: Percent of average rain for this date {style="color: darkblue"}
 
 ```{r}
 # Create an empty vector to store the extracted value
