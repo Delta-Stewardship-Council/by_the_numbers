@@ -90,7 +90,7 @@ northern_pdf_text <- pdf_text(northern_pdf_file)
 
 ```
 
-###### Current Precipitation for Northern Sierra Region {style="color: darkblue"}
+#### Current Precipitation for Northern Sierra Region {style="color: darkblue"}
 
 ```{r}
 
@@ -125,7 +125,7 @@ if (length(northern_pdf_text) > 0) {
 
 ```
 
-###### Northern Sierra Region: Percent of average rain for this date {style="color: darkblue"}
+##### Northern Sierra Region: Percent of average rain for this date {style="color: darkblue"}
 
 ```{r}
 # Create an empty vector to store the extracted value
@@ -193,6 +193,34 @@ print(central_pdf_text)
 
 ```
 
+#### Central Sierra {style="color: darkblue"}
+
+###### Current Precipitation for Central Sierra Region {style="color: darkblue"}
+
+```{r}
+#create an empty vector 
+Central_current_precip <- c()
+
+# Print the next four characters following "Current:" in each sentence
+if (length(central_pdf_text) > 0) {
+  for (sentence in central_pdf_text) {
+    pattern <- "(?i)Current:\\s?(.{4})"
+    next_four <- regmatches(sentence, regexpr(pattern, sentence, perl = TRUE))
+    if (length(next_four) > 0) {
+      # Append the value of next_four to the vector
+      Central_current_precip <- c(Central_current_precip, next_four)
+      cat(paste( next_four, "inches"))
+    } else {
+      cat("Next four characters after 'Current:' not found.")
+    }
+  }
+} else {
+  cat("No text extracted from the PDF.")
+}
+
+
+```
+
 Central Sierra Region: Percent of average rain for this date
 
 ```{r}
@@ -224,37 +252,7 @@ if (length(central_pdf_text) > 0) {
 
 ```
 
-# Central Sierra
-
-###### Current Precipitation for Central Sierra Region {style="color: darkblue"}
-
-```{r}
-#create an empty vector 
-Central_current_precip <- c()
-
-# Print the next four characters following "Current:" in each sentence
-if (length(central_pdf_text) > 0) {
-  for (sentence in central_pdf_text) {
-    pattern <- "(?i)Current:\\s?(.{4})"
-    next_four <- regmatches(sentence, regexpr(pattern, sentence, perl = TRUE))
-    if (length(next_four) > 0) {
-      # Append the value of next_four to the vector
-      Central_current_precip <- c(Central_current_precip, next_four)
-      cat(paste( next_four, "inches"))
-    } else {
-      cat("Next four characters after 'Current:' not found.")
-    }
-  }
-} else {
-  cat("No text extracted from the PDF.")
-}
-
-
-```
-
-#################################################################################### 
-
-#################### SNOW PACK
+# SNOW PACK
 
 ```{r, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
 #URL of pdf file
@@ -281,7 +279,7 @@ print(snow_pack_pdf_text)
 
 ```
 
-#North Snow average snow pack
+#### Northern Sierra snow pack {style="color: darkblue"}
 
 ```{r}
 # Define the pattern to match the line containing "NORTH" and the associated percentages
@@ -307,7 +305,7 @@ if (length(north_match) > 0) {
 
 ```
 
-#north snow water equivalent
+#### Northern Sierra snow water equivalent {style="color: darkblue"}
 
 ```{r}
 
@@ -333,7 +331,7 @@ if (length(snow_water_line) > 0) {
 
 ```
 
-#Central % Snow average snow pack
+#### Central Sierra snow pack {style="color: darkblue"}
 
 ```{r}
 # Define the pattern to match the line containing "NORTH" and the associated percentages
@@ -360,7 +358,7 @@ if (length(central_match) > 0) {
 
 ```
 
-#Central snow water equivalent
+#### Central Sierra snow water equivalent {style="color: darkblue"}
 
 ```{r}
 
@@ -400,7 +398,7 @@ if (central_sierra_position > 0) {
 
 ```
 
-# State wide average snow pack: water year
+### State wide average snow pack: water year
 
 ```{r}
 
@@ -457,7 +455,7 @@ if (statewide_position > 0) {
 
 ```
 
-################### Reservoir Storage
+# Reservoir Storage
 
 ```{r, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
 
@@ -507,6 +505,8 @@ print(SanLuis_percent_capacity)
 
 ```
 
+# Delta Flow and Exports
+
 ################### Flow Sacramento
 
 #collapsed code chunk makes a bad map of sacramento sensors
@@ -555,7 +555,9 @@ sac_flow_daily <- cdec_query(station = "FPT", sensor_num = 20,
 
 
 #need to take the average of all parameter_value for the date 
+
 sacramento_export_monthly_average<-mean(sac_flow_daily$parameter_value, na.rm = T)
+sacramento_export_monthly_average
 ```
 
 ```{r, echo=FALSE, results='hide', warning=FALSE, message=FALSE}
@@ -577,7 +579,7 @@ SanJoaquin_flow_daily <- cdec_query(station = "VNS", sensor_num = 20,
 print(SanJoaquin_flow_daily)
 ```
 
-#San Joaquin monthly average export
+### San Joaquin monthly average flow (CFS)
 
 ```{r}
 
@@ -641,7 +643,7 @@ delta_export_table_df <- do.call(rbind, lapply(delta_export_padded_table_data, f
 print(delta_export_table_df)
 ```
 
-#Total Delta Exports: 'total delta exports', average of (CVP + SWP)
+### Total Delta Exports: average of (CVP + SWP)
 
 ```{r}
 
@@ -665,11 +667,13 @@ print(average_delta_export_value)
 
 ```
 
-################################## Salinity
+# SALINITY
 
-#Sacramento River at Hood (station code SRH) #When run, will automatically update for current month
+### Conductivity Sacramento River at Hood
 
 ```{r}
+
+#When run, will automatically update for current month
 
 # Get the first day of the current month
 start_date <- floor_date(Sys.Date(), "month")
@@ -686,13 +690,15 @@ Sac_cond_monthly_average
 
 #### ppm conversion
 sac_ppm<-(Sac_cond_monthly_average*0.55)
-
+sac_ppm
 
 ```
 
-#San Joaquin River at Vernalis (station code - VER) #When run, will automatically update for current month
+### Conductivity San Joaquin River at Vernalis
 
 ```{r}
+
+#When run, will automatically update for current month
 
 # Get the first day of the current month
 start_date <- floor_date(Sys.Date(), "month")
@@ -714,9 +720,10 @@ SanJoa_ppm<-(SanJoaquin_cond_monthly_average*0.55)
 SanJoa_ppm
 ```
 
-#Salinity at Banks pumping plant (station code - HBP) #When run, will automatically update for current month
+### Conductivity at Banks pumping plant
 
 ```{r}
+#When run, will automatically update for current month
 
 
 # Get the first day of the current month
@@ -744,11 +751,11 @@ Banks_ppm<-(Banks_cond_monthly_average*0.55)
 Banks_ppm
 ```
 
-####################### TEMPERATURE
+# WATER TEMPERATURE
 
 #need to add hisotrical average data in --\> will add to csv file eventually
 
-#Water Temp - Sacramento river headwaters at Clear Creek
+### Sacramento river headwaters at Clear Creek water temperature
 
 ```{r}
 
@@ -775,7 +782,7 @@ SacClearCreek_waterTemp_monthly_average
 
 ```
 
-#Water Temp - Sacramento/San Joaquin Rivers confluence at Collinsville
+### Sacramento/San Joaquin rivers confluence at Collinsville water temperature
 
 ```{r}
 
@@ -823,11 +830,11 @@ SouthDelta_waterTemp_new <- cdec_query(station = "CLC", sensor_num = "146",
 SouthDelta_waterTemp_new$parameter_F<-(SouthDelta_waterTemp_new$parameter_value*( 9/5) + 32)
 ```
 
-#Water Temp - South Delta (near HBP) at Clifton Court Forebay
+### South Delta at Clifton Court Forebay water temperature
 
 ```{r}
 #need to take the average of all parameter_value for the date 
 SouthDelta_waterTemp_monthly_average_F<-mean(SouthDelta_waterTemp_new$parameter_F, na.rm = T)
-SouthDelta_waterTemp_monthly_average_F
+cat(SouthDelta_waterTemp_monthly_average_F)
 
 ```
