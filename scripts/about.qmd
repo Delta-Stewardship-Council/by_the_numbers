@@ -7,7 +7,7 @@ fig-path: figures/
 
 
 
-![Image of the delta](/figures/delta_about_background.jpg)
+![Image of the delta](../figures/delta_about_background.jpg)
 
 
 

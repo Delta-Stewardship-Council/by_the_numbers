@@ -9,10 +9,5 @@ website:
       - index.qmd
       - about.qmd
 
-format:
-  html:
-    fig-path: figures/
 
-resources:
-  - path: figures
----
+
